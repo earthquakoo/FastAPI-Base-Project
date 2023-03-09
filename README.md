@@ -1,7 +1,7 @@
-## FastAPI Structure
+## Fastapi-Base-Project
 https://github.com/zhanymkanov/fastapi-best-practices
 
-### 1. Fastapi-Base-Project
+### 1. FastAPI Structure
 ```
 ├── src
 │   ├── auth
