@@ -3,10 +3,9 @@ from email_validator import EmailNotValidError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from server.src.database import engine
-from server.src.auth.router import router as auth_router
-from server.src.category.router import router as category_router
-import server.src.user.models as user_models
+from src.database import engine
+from src.auth.router import router as auth_router
+import src.user.models as user_models
 
 user_models.Base.metadata.create_all(bind=engine)
 
@@ -22,7 +21,6 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-app.include_router(category_router)
 
 @app.get("/")
 async def root():
