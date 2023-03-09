@@ -2,7 +2,7 @@
 https://github.com/zhanymkanov/fastapi-best-practices
 
 ### 1. Fastapi-Base-Project
-
+```
 ├── src
 │   ├── auth
 |   |   ├── config.py   # local configs
@@ -37,3 +37,4 @@ https://github.com/zhanymkanov/fastapi-best-practices
 ├── .env
 ├── .gitignore
 └── alembic.ini
+```
