@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.database import engine
 from src.auth.router import router as auth_router
-import src.user.models as user_models
+import src.models as user_models
 
 user_models.Base.metadata.create_all(bind=engine)
 
