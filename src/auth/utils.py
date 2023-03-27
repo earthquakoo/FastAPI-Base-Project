@@ -60,7 +60,7 @@ def create_refresh_token(data: dict):
     return encoded_jwt
 
 
-def decode_access_jwt(token):
+def decode_access_token(token):
     try:
         payload = jwt.decode(token, jwt_settings.SECRET_KEY, algorithms=[jwt_settings.ALGORITHM])
         if payload["type"] == "access_token":
@@ -71,7 +71,7 @@ def decode_access_jwt(token):
             raise HTTPException(status_code=401, detail='Token expired')
 
 
-def decode_refresh_jwt(token):
+def decode_refresh_token(token):
     try:
         payload = jwt.decode(token, jwt_settings.SECRET_KEY, algorithms=[jwt_settings.ALGORITHM])
         if payload["type"] == "refresh_token":
@@ -83,11 +83,11 @@ def decode_refresh_jwt(token):
 
 
 def auth_access_wrapper(auth: HTTPAuthorizationCredentials = Security(security)):
-		return decode_access_jwt(auth.credentials)
+    return decode_access_token(auth.credentials)
 
 
 def auth_refresh_wrapper(auth: HTTPAuthorizationCredentials = Security(security)):
-		return decode_refresh_jwt(auth.credentials)
+    return decode_refresh_token(auth.credentials)
 
     
 def read_html_content_and_replace(

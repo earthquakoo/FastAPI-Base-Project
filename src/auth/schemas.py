@@ -18,10 +18,6 @@ class UserBase(BaseModel):
             raise auth_exceptions.EmailNotValidException()
         return email
 
-class User(UserBase):
-    class Config:
-        orm_mode = True
-
 
 class UserCreate(UserBase):
     password: str = Field(default=..., min_length=4, max_length=30)
@@ -34,22 +30,8 @@ class UserCreateOut(UserBase):
         orm_mode = True
 
 
-class VerificationCode(BaseModel):
-    email: str
+class VerificationCode(UserBase):
     verification_code: str = Field(default=..., max_length=6)
-    
-
-class VerifyEmail(BaseModel):
-    email: str
-    
-    @validator('email')
-    def email_must_be_valid(cls, v):
-        try:
-            validation = validate_email(v)
-            email = validation.email
-        except EmailNotValidError as e:
-            raise exceptions.EmailNotValidException()
-        return email
     
     
 class Token(BaseModel):

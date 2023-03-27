@@ -70,32 +70,32 @@ async def register(user: schemas.UserCreate, background_tasks: BackgroundTasks, 
 async def verify_email(user: schemas.VerificationCode, db: Session = Depends(get_db)):
     user_dict = user.dict()
     
-    user = db.query(glob_models.User).filter(glob_models.User.email == user_dict['email']).first()
+    user_data = db.query(glob_models.User).filter(glob_models.User.email == user_dict['email']).first()
     
     if service.get_current_active_user(db ,email=user_dict['email'], is_activate=True):
         raise exceptions.EmailAlreadyExistsException(email=user_dict['email'])   
     
-    if not utils.verify_code(user_dict['verification_code'], user.verification_code):
+    if not utils.verify_code(user_dict['verification_code'], user_data.verification_code):
         raise exceptions.InvalidVerificationCode()
 
-    user.is_activate = True
+    user_data.is_activate = True
     
-    db.add(user)
+    db.add(user_data)
     db.commit()
-    db.refresh(user)
+    db.refresh(user_data)
     
     return "Email authentication is complete."
 
 
 @router.post('/login', response_model=schemas.Token)
-async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
-    ):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = service.authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise exceptions.InvalidEmailOrPasswordException()
-        
+    
+    if service.get_current_active_user(db ,email=user.email, is_activate=False):
+        raise exceptions.UnregisteredEmail()
+    
     access_token = utils.create_access_token(data={"sub": user.email})
     refresh_token = utils.create_refresh_token(data={"sub": user.email})
     
@@ -107,10 +107,10 @@ async def login(
 
 
 @router.get("/update_token")
-def update_token(username=Depends(utils.auth_refresh_wrapper)):
-    if username is None:
-        raise HTTPException(status_code=401, detail="not authorization")
-    new_token = utils.create_access_token({"sub": username})
+def update_token(user=Depends(utils.auth_refresh_wrapper)):
+    if user is None:
+        raise exceptions.CredentialsException()
+    new_token = utils.create_access_token({"sub": user})
     return {"access_token": new_token}
 
 

@@ -13,14 +13,9 @@ def get_user_by_email(db: Session, email: EmailStr):
     return user
 
 
-def get_password_by_email(db: Session, email: EmailStr):
-    user = db.query(glob_models.User).filter(glob_models.User.email == email).first()
-    return user.password
-
-
 def get_current_active_user(db: Session, email: EmailStr, is_activate: bool):
-    return db.query(glob_models.User).filter(glob_models.User.email == email, glob_models.User.is_activate == is_activate).first()
-
+    user = db.query(glob_models.User).filter(glob_models.User.email == email, glob_models.User.is_activate == is_activate).first()
+    return user
 
 def authenticate_user(db: Session, email: str, password: str):
     try:
